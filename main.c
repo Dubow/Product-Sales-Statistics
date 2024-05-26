@@ -1,91 +1,117 @@
 #include <stdio.h>
 
 #define NUM_PRODUCTS 5
-#define NUM_WEEKS 4
-#define NUM_MONTHS 12
+#define WEEKS_IN_MONTH 4
 
-// Structure to represent product
+// Structure to represent a product
 typedef struct {
-    int production[NUM_WEEKS];
-    int sales[NUM_WEEKS];
+    int product_id;
+    char product_name[20];
+    float weekly_production[WEEKS_IN_MONTH];
+    float weekly_sales[WEEKS_IN_MONTH];
 } Product;
 
 // Function prototypes
-void calculateWeeklyValue(Product products[], int week);
-void calculateTotalValue(Product products[]);
-void displayMenu();
+void calculateWeeklyProductSales(Product products[]);
+void displayWeeklyProductSales(Product products[]);
+void calculateMonthlyProductSales(Product products[]);
+void displayMonthlyProductSales(Product products[]);
+void calculateTotalProductSales(Product products[]);
+void displayTotalProductSales(Product products[]);
 
 int main() {
-    Product products[NUM_PRODUCTS] = {0}; // Initialize all products to zero
-
+    Product products[NUM_PRODUCTS] = {
+        {1, "Product A"},
+        {2, "Product B"},
+        {3, "Product C"},
+        {4, "Product D"},
+        {5, "Product E"}
+    };
+    
     int choice;
+    
     do {
-        displayMenu();
+        printf("\n1. Weekly production and sales for each product\n");
+        printf("2. Weekly production and sales for all products\n");
+        printf("3. Production and sales for each product in one month\n");
+        printf("4. Total production and sales for all products\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
         scanf("%d", &choice);
-
+        
         switch(choice) {
             case 1:
-                printf("Enter the week number (1-%d): ", NUM_WEEKS);
-                int week;
-                scanf("%d", &week);
-                calculateWeeklyValue(products, week - 1);
+                calculateWeeklyProductSales(products);
                 break;
             case 2:
-                calculateTotalValue(products);
+                displayWeeklyProductSales(products);
                 break;
             case 3:
-                printf("Enter the product number (1-%d): ", NUM_PRODUCTS);
-                int productNum;
-                scanf("%d", &productNum);
-                printf("Enter the month number (1-%d): ", NUM_MONTHS);
-                int month;
-                scanf("%d", &month);
-                printf("Production value for product %d in month %d: %d\n", productNum, month, products[productNum - 1].production[month - 1]);
-                printf("Sales value for product %d in month %d: %d\n", productNum, month, products[productNum - 1].sales[month - 1]);
+                calculateMonthlyProductSales(products);
                 break;
             case 4:
-                calculateTotalValue(products);
+                calculateTotalProductSales(products);
                 break;
             case 5:
-                printf("Exiting...");
+                printf("Exiting program.\n");
                 break;
             default:
-                printf("Invalid choice\n");
+                printf("Invalid choice. Please enter a number between 1 and 5.\n");
         }
     } while(choice != 5);
-
+    
     return 0;
 }
 
-// Function to calculate weekly production and sales values for each product
-void calculateWeeklyValue(Product products[], int week) {
-    printf("Weekly production and sales values for each product:\n");
-    for(int i = 0; i < NUM_PRODUCTS; i++) {
-        printf("Product %d - Production: %d, Sales: %d\n", i + 1, products[i].production[week], products[i].sales[week]);
-    }
-}
-
-// Function to calculate total production and sales values for all products
-void calculateTotalValue(Product products[]) {
-    int totalProduction = 0;
-    int totalSales = 0;
-    for(int i = 0; i < NUM_PRODUCTS; i++) {
-        for(int j = 0; j < NUM_WEEKS; j++) {
-            totalProduction += products[i].production[j];
-            totalSales += products[i].sales[j];
+void calculateWeeklyProductSales(Product products[]) {
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        printf("Enter weekly production for %s:\n", products[i].product_name);
+        for (int j = 0; j < WEEKS_IN_MONTH; j++) {
+            printf("Week %d: ", j + 1);
+            scanf("%f", &products[i].weekly_production[j]);
+        }
+        
+        printf("Enter weekly sales for %s:\n", products[i].product_name);
+        for (int j = 0; j < WEEKS_IN_MONTH; j++) {
+            printf("Week %d: ", j + 1);
+            scanf("%f", &products[i].weekly_sales[j]);
         }
     }
-    printf("Total production value: %d\n", totalProduction);
-    printf("Total sales value: %d\n", totalSales);
 }
 
-// Function to display menu
-void displayMenu() {
-    printf("\nMenu:\n");
-    printf("1. Weekly production and sales values for each product\n");
-    printf("2. Weekly production and sales values for all products\n");
-    printf("3. Production and sales value for each product in a month\n");
-    printf("4. Total production and sales values for all products\n");
-    printf("5. Exit\n");
-    printf("Enter your choice: ");
+void displayWeeklyProductSales(Product products[]) {
+    printf("Weekly production and sales for each product:\n");
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        printf("%s:\n", products[i].product_name);
+        printf("Week   Production    Sales\n");
+        for (int j = 0; j < WEEKS_IN_MONTH; j++) {
+            printf("%-6d%-14.2f%.2f\n", j + 1, products[i].weekly_production[j], products[i].weekly_sales[j]);
+        }
+        printf("\n");
+    }
 }
+
+void calculateMonthlyProductSales(Product products[]) {
+    printf("Production and sales for each product in one month:\n");
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        float total_production = 0, total_sales = 0;
+        for (int j = 0; j < WEEKS_IN_MONTH; j++) {
+            total_production += products[i].weekly_production[j];
+            total_sales += products[i].weekly_sales[j];
+        }
+        printf("%s - Production: %.2f, Sales: %.2f\n", products[i].product_name, total_production, total_sales);
+    }
+}
+
+void calculateTotalProductSales(Product products[]) {
+    printf("Total production and sales for all products:\n");
+    float total_production = 0, total_sales = 0;
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        for (int j = 0; j < WEEKS_IN_MONTH; j++) {
+            total_production += products[i].weekly_production[j];
+            total_sales += products[i].weekly_sales[j];
+        }
+    }
+    printf("Total Production: %.2f, Total Sales: %.2f\n", total_production, total_sales);
+}
+
