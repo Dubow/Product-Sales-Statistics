@@ -2,6 +2,7 @@
 
 #define NUM_PRODUCTS 5
 #define NUM_WEEKS 4
+#define NUM_MONTHS 12
 
 // Structure to represent product
 typedef struct {
@@ -36,7 +37,7 @@ int main() {
                 printf("Enter the product number (1-%d): ", NUM_PRODUCTS);
                 int productNum;
                 scanf("%d", &productNum);
-                printf("Enter the month number (1-%d): ", NUM_WEEKS);
+                printf("Enter the month number (1-%d): ", NUM_MONTHS);
                 int month;
                 scanf("%d", &month);
                 printf("Production value for product %d in month %d: %d\n", productNum, month, products[productNum - 1].production[month - 1]);
