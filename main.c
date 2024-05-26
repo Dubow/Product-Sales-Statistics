@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NUM_PRODUCTS 5
 #define WEEKS_IN_MONTH 4
@@ -6,27 +7,24 @@
 // Structure to represent a product
 typedef struct {
     int product_id;
-    char product_name[20];
+    char *product_name;
     float weekly_production[WEEKS_IN_MONTH];
     float weekly_sales[WEEKS_IN_MONTH];
 } Product;
 
 // Function prototypes
+void initializeProducts(Product products[]);
 void calculateWeeklyProductSales(Product products[]);
 void displayWeeklyProductSales(Product products[]);
 void calculateMonthlyProductSales(Product products[]);
 void displayMonthlyProductSales(Product products[]);
 void calculateTotalProductSales(Product products[]);
 void displayTotalProductSales(Product products[]);
+void freeProducts(Product products[]);
 
 int main() {
-    Product products[NUM_PRODUCTS] = {
-        {1, "Product A"},
-        {2, "Product B"},
-        {3, "Product C"},
-        {4, "Product D"},
-        {5, "Product E"}
-    };
+    Product products[NUM_PRODUCTS];
+    initializeProducts(products);
     
     int choice;
     
@@ -60,21 +58,31 @@ int main() {
         }
     } while(choice != 5);
     
+    freeProducts(products);
+    
     return 0;
+}
+
+void initializeProducts(Product products[]) {
+    char *product_names[NUM_PRODUCTS] = {"Product A", "Product B", "Product C", "Product D", "Product E"};
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        products[i].product_id = i + 1;
+        products[i].product_name = product_names[i];
+    }
 }
 
 void calculateWeeklyProductSales(Product products[]) {
     for (int i = 0; i < NUM_PRODUCTS; i++) {
         printf("Enter weekly production for %s:\n", products[i].product_name);
         for (int j = 0; j < WEEKS_IN_MONTH; j++) {
-            printf("Week %d: ", j + 1);
-            scanf("%f", &products[i].weekly_production[j]);
+            printf("Week %d:  ", j + 1);
+            scanf("%f ", &products[i].weekly_production[j]);
         }
         
         printf("Enter weekly sales for %s:\n", products[i].product_name);
         for (int j = 0; j < WEEKS_IN_MONTH; j++) {
-            printf("Week %d: ", j + 1);
-            scanf("%f", &products[i].weekly_sales[j]);
+            printf("Week %d:  ", j + 1);
+            scanf("%f ", &products[i].weekly_sales[j]);
         }
     }
 }
@@ -99,7 +107,7 @@ void calculateMonthlyProductSales(Product products[]) {
             total_production += products[i].weekly_production[j];
             total_sales += products[i].weekly_sales[j];
         }
-        printf("%s - Production: %.2f, Sales: %.2f\n", products[i].product_name, total_production, total_sales);
+        printf("%s = Production: %.2f, Sales: %.2f\n", products[i].product_name, total_production, total_sales);
     }
 }
 
@@ -113,5 +121,11 @@ void calculateTotalProductSales(Product products[]) {
         }
     }
     printf("Total Production: %.2f, Total Sales: %.2f\n", total_production, total_sales);
+}
+
+void freeProducts(Product products[]) {
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        free(products[i].product_name);
+    }
 }
 
